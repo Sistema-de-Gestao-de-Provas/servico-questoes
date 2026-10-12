@@ -25,3 +25,25 @@ spring:
     liquibase-schema: public
     parameters:
       schema: ${spring.liquibase.default-schema}
+  # Mensagens de erro da API sempre em pt_BR (i18n/messages_pt_BR.properties)
+  web:
+    locale: pt_BR
+    locale-resolver: fixed
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: ${keycloak.server-url}/realms/${keycloak.realm}
+
+keycloak:
+  server-url: ${KEYCLOAK_URL:http://localhost:8180}
+  realm: ${KEYCLOAK_REALM:sgp}
+
+# URL base do servico-usuarios, usada para validar dados que pertencem a ele
+servico-usuarios:
+  url: ${SERVICO_USUARIOS_URL:http://localhost:8081/api}
+
+server:
+  port: 8082
+  servlet:
+    context-path: /api
