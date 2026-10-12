@@ -1,0 +1,124 @@
+databaseChangeLog:
+  - changeSet:
+      id: v000-criar-tabela-questao
+      author: Diego Casemiro
+      changes:
+        - createTable:
+            schemaName: ${schema}
+            tableName: questao
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    primaryKeyName: pk_questao
+              - column:
+                  name: usuario_keycloak_id
+                  type: UUID
+                  constraints:
+                    nullable: false
+              - column:
+                  name: materia_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: enunciado
+                  type: TEXT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: dificuldade
+                  type: VARCHAR(20)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: criado_em
+                  type: TIMESTAMP
+                  constraints:
+                    nullable: false
+              - column:
+                  name: atualizado_em
+                  type: TIMESTAMP
+              - column:
+                  name: deletado_em
+                  type: TIMESTAMP
+        - sql:
+            sql: ALTER TABLE ${schema}.questao ADD CONSTRAINT ck_questao_dificuldade CHECK (dificuldade IN ('FACIL', 'MEDIO', 'DIFICIL'));
+        - createIndex:
+            schemaName: ${schema}
+            tableName: questao
+            indexName: idx_questao_usuario_keycloak_id
+            columns:
+              - column:
+                  name: usuario_keycloak_id
+        - createIndex:
+            schemaName: ${schema}
+            tableName: questao
+            indexName: idx_questao_materia_id
+            columns:
+              - column:
+                  name: materia_id
+      rollback:
+        - dropTable:
+            schemaName: ${schema}
+            tableName: questao
+
+  - changeSet:
+      id: v000-criar-tabela-alternativa
+      author: Diego Casemiro
+      changes:
+        - createTable:
+            schemaName: ${schema}
+            tableName: alternativa
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    primaryKeyName: pk_alternativa
+              - column:
+                  name: questao_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_alternativa_questao
+                    referencedTableSchemaName: ${schema}
+                    referencedTableName: questao
+                    referencedColumnNames: id
+              - column:
+                  name: texto
+                  type: TEXT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: correta
+                  type: BOOLEAN
+                  constraints:
+                    nullable: false
+              - column:
+                  name: criado_em
+                  type: TIMESTAMP
+                  constraints:
+                    nullable: false
+              - column:
+                  name: atualizado_em
+                  type: TIMESTAMP
+              - column:
+                  name: deletado_em
+                  type: TIMESTAMP
+        - createIndex:
+            schemaName: ${schema}
+            tableName: alternativa
+            indexName: idx_alternativa_questao_id
+            columns:
+              - column:
+                  name: questao_id
+      rollback:
+        - dropTable:
+            schemaName: ${schema}
+            tableName: alternativa
